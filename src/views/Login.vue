@@ -4,16 +4,16 @@
     <form @submit.prevent="handleLogin">
       <div>
         <label for="username">帳號：</label>
-        <input id="username" v-model="username" required />
+        <input id="username" v-model="username" required autocomplete="username" />
       </div>
       <div>
         <label for="password">密碼：</label>
-        <input id="password" type="password" v-model="password" required />
+        <input id="password" type="password" v-model="password" required autocomplete="current-password" />
       </div>
       <button type="submit" :disabled="loading">
         {{ loading ? '登入中...' : '登入' }}
       </button>
-      <p v-if="errorMsg" style="color:red;">{{ errorMsg }}</p>
+      <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
     </form>
   </div>
 </template>
@@ -48,24 +48,97 @@ async function handleLogin() {
 
 <style scoped>
 .login-container {
-  max-width: 300px;
+  max-width: 320px;
   margin: 100px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  padding: 30px 40px;
+  background-color: #000;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  color: #fff;
+  font-family: 'Courier New', Courier, monospace;
+  box-shadow: 0 0 15px #00ff00aa;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 整個容器置中 */
 }
-.login-container label {
-  display: block;
-  margin-bottom: 6px;
+
+h2 {
+  margin-bottom: 30px;
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+  text-align: center;
 }
-.login-container input {
+
+form {
   width: 100%;
-  padding: 6px;
-  margin-bottom: 12px;
-  box-sizing: border-box;
 }
-.login-container button {
+
+form > div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+label {
+  width: 80px; /* 固定寬度，讓輸入框對齊 */
+  color: #00ff00;
+  font-weight: bold;
+  text-shadow: 0 0 4px #00ff00bb;
+}
+
+input {
+  flex: 1; /* 填滿剩餘空間 */
+  padding: 10px 12px;
+  background-color: transparent;
+  border: 2px solid #00ff00;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 16px;
+  font-family: 'Courier New', Courier, monospace;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+input::placeholder {
+  color: #33ff33aa;
+}
+
+input:focus {
+  border-color: #33ff33;
+  box-shadow: 0 0 8px #33ff33;
+}
+
+button {
   width: 100%;
-  padding: 8px;
+  padding: 12px;
+  background-color: transparent;
+  border: 2px solid #00ff00;
+  border-radius: 4px;
+  color: #00ff00;
+  font-size: 18px;
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button:not(:disabled):hover {
+  background-color: #00ff00;
+  color: #000;
+  box-shadow: 0 0 12px #00ff00;
+}
+
+.error-msg {
+  margin-top: 10px;
+  color: #ff4c4c;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 0 0 5px #ff4c4cbb;
 }
 </style>
+
