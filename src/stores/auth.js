@@ -1,6 +1,8 @@
 import axios from 'axios'
 import { defineStore } from 'pinia'
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
@@ -9,7 +11,7 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async login(username, password) {
       try {
-        const response = await axios.post('https://localhost:7005/api/Auth/login', {
+        const response = await axios.post(`${apiBaseUrl}/api/Auth/login`, {
           username,
           password,
         })
