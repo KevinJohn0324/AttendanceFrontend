@@ -12,6 +12,7 @@
   "homepage": "https://KevinJohn0324.github.io/AttendanceFrontend",
   "dependencies": {
     "axios": "^1.9.0",
+    "element-plus": "^2.10.1",
     "pinia": "^3.0.1",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
     "gh-pages": "^6.3.0",
+    "sass": "^1.89.2",
     "typescript": "^5.8.3",
     "vite": "^6.2.4",
     "vite-plugin-vue-devtools": "^7.7.2"
