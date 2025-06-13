@@ -1,0 +1,59 @@
+<!-- Layout.vue -->
+<template>
+  <el-container style="height: 100vh;">
+    <!-- 側邊欄 -->
+    <el-aside width="220px" style="background-color: #000; color: #00ff00;">
+      <h2 style="text-align:center; margin-bottom: 20px; color:#00ff00;">考勤系統</h2>
+      <el-menu
+        :default-active="activeMenu"
+        background-color="#000"
+        text-color="#00ff00"
+        active-text-color="#00ff00"
+        router
+        @select="goTo"
+        style="border-right: none;"
+      >
+        <el-menu-item index="home">首頁</el-menu-item>
+        <el-menu-item index="employees">員工資料</el-menu-item>
+        <el-menu-item index="records">打卡紀錄</el-menu-item>
+      </el-menu>
+    </el-aside>
+
+    <!-- 主內容 -->
+    <el-container>
+      <el-header
+        style="display:flex; justify-content:flex-end; align-items:center; background-color:#121212; color:#00ff00; border-bottom: 1px solid #00ff00; padding-right: 20px;"
+      >
+        <div style="font-weight:bold;">{{ currentTime }}</div>
+      </el-header>
+
+      <el-main style="background-color: #121212; color:#00ff00; padding: 20px;">
+        <slot />
+      </el-main>
+    </el-container>
+  </el-container>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+
+const router = useRouter()
+const route = useRoute()
+
+const activeMenu = ref(route.path.includes('employees') ? 'employees' : 'home')
+function goTo(page) {
+  activeMenu.value = page
+  router.push(page === 'home' ? '/dashboard' : `/${page}`)
+}
+
+const currentTime = ref('')
+function updateTime() {
+  const d = new Date()
+  currentTime.value = d.toLocaleTimeString('zh-TW', { hour12: false })
+}
+onMounted(() => {
+  updateTime()
+  setInterval(updateTime, 1000)
+})
+</script>

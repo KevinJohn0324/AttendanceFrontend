@@ -4,6 +4,7 @@ import Login from '../views/Login.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const Dashboard = () => import('../views/dashboard/index.vue')
+const EmployeeList = () => import('../views/employees/EmployeeListView.vue')
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -11,6 +12,11 @@ const routes = [
   {
     path: '/dashboard',
     component: Dashboard,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/employees',
+    component: EmployeeList,
     meta: { requiresAuth: true },
   },
 ]
