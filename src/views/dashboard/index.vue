@@ -67,10 +67,17 @@ const authStore = useAuthStore()
 
 const username = computed(() => authStore.username || '使用者')
 
+// 側邊欄選單狀態
 const activeMenu = ref('home')
+
+// 導航到指定頁面
 function goTo(page) {
   activeMenu.value = page
-  router.push(`/${page === 'home' ? '' : page}`)
+  if (page === 'home') {
+    router.push('/dashboard')
+  } else {
+    router.push(`/${page}`)
+  }
 }
 
 function logout() {
@@ -86,6 +93,7 @@ function leave() {
   alert('請假申請送出！')
 }
 
+// 日曆相關數據
 const now = new Date()
 const year = now.getFullYear()
 const month = now.getMonth() + 1
@@ -96,10 +104,12 @@ function daysInMonth(y, m) {
 }
 const daysInMonthValue = daysInMonth(year, month)
 
+// 計算第一天的星期
 const firstDay = new Date(year, month - 1, 1).getDay()
 const blanks = Array.from({ length: firstDay }, (_, i) => i + 1)
 const daysInMonthArr = Array.from({ length: daysInMonthValue }, (_, i) => i + 1)
 
+// 檢查是否為今天
 function isToday(day) {
   const today = new Date()
   return (
@@ -109,12 +119,14 @@ function isToday(day) {
   )
 }
 
+// 當前時間
 const currentTime = ref('')
 function updateTime() {
   const d = new Date()
   currentTime.value = d.toLocaleTimeString('zh-TW', { hour12: false })
 }
 
+// 組件掛載時初始化
 onMounted(() => {
   updateTime()
   setInterval(updateTime, 1000)
