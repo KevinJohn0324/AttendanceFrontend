@@ -65,7 +65,7 @@ import { useAuthStore } from '../../stores/auth'
 const router = useRouter()
 const authStore = useAuthStore()
 
-const username = computed(() => authStore.username || '使用者')
+const username = computed(() => authStore.user?.username || '使用者')
 
 // 側邊欄選單狀態
 const activeMenu = ref('home')
