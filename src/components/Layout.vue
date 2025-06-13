@@ -1,4 +1,3 @@
-<!-- Layout.vue -->
 <template>
   <el-container style="height: 100vh;">
     <!-- 側邊欄 -->
@@ -22,9 +21,13 @@
     <!-- 主內容 -->
     <el-container>
       <el-header
-        style="display:flex; justify-content:flex-end; align-items:center; background-color:#121212; color:#00ff00; border-bottom: 1px solid #00ff00; padding-right: 20px;"
+        style="display:flex; justify-content:space-between; align-items:center; background-color:#121212; color:#00ff00; border-bottom: 1px solid #00ff00; padding: 0 20px;"
       >
         <div style="font-weight:bold;">{{ currentTime }}</div>
+        <div style="display:flex; align-items:center; gap: 15px;">
+          <span style="font-weight:bold;">{{ username }}</span>
+          <el-button size="medium" type="warning" @click="logout">登出</el-button>
+        </div>
       </el-header>
 
       <el-main style="background-color: #121212; color:#00ff00; padding: 20px;">
@@ -35,18 +38,31 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
 const route = useRoute()
+const authStore = useAuthStore()
 
+// 顯示的使用者名稱
+const username = computed(() => authStore.username || '使用者')
+
+// 選單選擇狀態
 const activeMenu = ref(route.path.includes('employees') ? 'employees' : 'home')
 function goTo(page) {
   activeMenu.value = page
   router.push(page === 'home' ? '/dashboard' : `/${page}`)
 }
 
+// 登出動作
+function logout() {
+  authStore.logout()
+  router.push('/login')
+}
+
+// 顯示時間
 const currentTime = ref('')
 function updateTime() {
   const d = new Date()
