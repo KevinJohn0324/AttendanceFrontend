@@ -47,7 +47,7 @@ const route = useRoute()
 const authStore = useAuthStore()
 
 // 顯示的使用者名稱
-const username = computed(() => authStore.username || '使用者')
+const username = computed(() => authStore.user?.username || '使用者')
 
 // 選單選擇狀態
 const activeMenu = ref(route.path.includes('employees') ? 'employees' : 'home')
