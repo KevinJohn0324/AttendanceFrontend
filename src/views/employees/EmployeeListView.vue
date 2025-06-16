@@ -37,28 +37,31 @@
 
         <!-- 新增員工對話框 -->
         <el-dialog title="新增員工" v-model="showAddDialog" width="500px">
-            <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
-                <el-form-item style="margin-top: 15px;" label="員工編號" prop="employeeCode">
-                    <el-input v-model="form.employeeCode" />
+            <el-form :model="addForm" :rules="rules" ref="formRef" label-width="100px">
+                <el-form-item style="margin-top: 15px;" label="帳號" prop="username">
+                    <el-input v-model="addForm.username" />
                 </el-form-item>
-                <el-form-item label="姓名" prop="name">
-                    <el-input v-model="form.name" />
+                <el-form-item label="密碼" prop="password">
+                    <el-input v-model="addForm.password" />
                 </el-form-item>
-                <el-form-item label="部門" prop="department">
-                    <el-input v-model="form.department" />
+                <el-form-item label="員工編號" prop="employeeCode">
+                    <el-input v-model="addForm.employeeCode" />
+                </el-form-item>
+                <el-form-item label="員工名稱" prop="name">
+                    <el-input v-model="addForm.name" />
+                </el-form-item>
+                <el-form-item label="部門名稱" prop="department">
+                    <el-input v-model="addForm.department" />
                 </el-form-item>
                 <el-form-item label="職稱" prop="position">
-                    <el-input v-model="form.position" />
-                </el-form-item>
-                <el-form-item label="狀態" prop="status">
-                    <el-select v-model="form.status" placeholder="選擇狀態">
-                        <el-option label="在職" value="Y" />
-                        <el-option label="離職" value="N" />
-                    </el-select>
+                    <el-input v-model="addForm.position" />
                 </el-form-item>
                 <el-form-item label="到職日" prop="hireDate">
-                    <el-date-picker v-model="form.hireDate" type="date" placeholder="選擇日期" format="YYYY-MM-DD"
-                        value-format="YYYY-MM-DD" style="width: 100%;" />
+                    <el-date-picker v-model="addForm.hireDate" type="date" placeholder="選擇日期" format="YYYY-MM-DD"
+                    value-format="YYYY-MM-DD" style="width: 100%;" />
+                </el-form-item>
+                <el-form-item label="角色" prop="roleId">
+                    <el-input v-model="addForm.roleId" />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -69,28 +72,28 @@
 
         <!-- 修改員工對話框 -->
         <el-dialog title="修改員工" v-model="showEditDialog" width="500px">
-            <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
+            <el-form :model="editForm" :rules="rules" ref="formRef" label-width="100px">
                 <!-- 表單欄位同新增 -->
                 <el-form-item style="margin-top: 15px;" label="員工編號" prop="employeeCode">
-                    <el-input v-model="form.employeeCode" disabled />
+                    <el-input v-model="editForm.employeeCode" disabled />
                 </el-form-item>
                 <el-form-item label="姓名" prop="name">
-                    <el-input v-model="form.name" />
+                    <el-input v-model="editForm.name" />
                 </el-form-item>
                 <el-form-item label="部門" prop="department">
-                    <el-input v-model="form.department" />
+                    <el-input v-model="editForm.department" />
                 </el-form-item>
                 <el-form-item label="職稱" prop="position">
-                    <el-input v-model="form.position" />
+                    <el-input v-model="editForm.position" />
                 </el-form-item>
                 <el-form-item label="狀態" prop="status">
-                    <el-select v-model="form.status" placeholder="選擇狀態">
+                    <el-select v-model="editForm.status" placeholder="選擇狀態">
                         <el-option label="在職" value="Y" />
                         <el-option label="離職" value="N" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="到職日" prop="hireDate">
-                    <el-date-picker v-model="form.hireDate" type="date" placeholder="選擇日期" format="YYYY-MM-DD"
+                    <el-date-picker v-model="editForm.hireDate" type="date" placeholder="選擇日期" format="YYYY-MM-DD"
                         value-format="YYYY-MM-DD" style="width: 100%;" />
                 </el-form-item>
             </el-form>
@@ -107,13 +110,23 @@
     </Layout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
 import Layout from '../../components/Layout.vue'
-import { apiGet } from '@/utils/api'
+import { apiGet, apiPost, apiPut } from '@/utils/api'
+import {
+  AddEmployeeModel,
+  defaultAddEmployee,
+  EditEmployeeModel,
+  defaultEditEmployee,
+  Employee,
+  EmployeeListData,
+  ApiResponse
+} from '@/models/employee'
 
 // 員工清單與狀態
-const employees = ref([])
+const employees = ref<Employee[]>([])
 const loading = ref(false)
 
 const page = ref(1)
@@ -123,20 +136,21 @@ const totalCount = ref(0)
 async function fetchEmployees() {
     loading.value = true
     try {
-        const res = await apiGet('/api/User/userAndEmployeeData', {
+        const res = await apiGet<EmployeeListData>('/api/User/userAndEmployeeData', {
             page: page.value,
             pageSize: pageSize,
         })
+        console.log('API 回傳', res)
         employees.value = res.items
         totalCount.value = res.totalCount
     } catch (error) {
-        alert('取得員工資料失敗：' + (error.message || error))
+        alert('取得員工資料失敗：' + (error as any).message|| error)
     } finally {
         loading.value = false
     }
 }
 
-function handlePageChange(newPage) {
+function handlePageChange(newPage: number) {
     page.value = newPage
     fetchEmployees()
 }
@@ -145,49 +159,64 @@ onMounted(() => {
     fetchEmployees()
 })
 
-// 表單與對話框狀態
+// 控制對話框顯示
 const showAddDialog = ref(false)
 const showEditDialog = ref(false)
 
-const form = reactive({
-    employeeCode: '',
-    name: '',
-    department: '',
-    position: '',
-    status: 'Y',
-    hireDate: '',
-})
-
-const rules = {
-    employeeCode: [{ required: true, message: '請輸入員工編號', trigger: 'blur' }],
-    name: [{ required: true, message: '請輸入姓名', trigger: 'blur' }],
-    department: [{ required: true, message: '請輸入部門', trigger: 'blur' }],
-    position: [{ required: true, message: '請輸入職稱', trigger: 'blur' }],
-    status: [{ required: true, message: '請選擇狀態', trigger: 'change' }],
-    hireDate: [{ required: true, message: '請選擇到職日', trigger: 'change' }],
-}
-
+// 表單資料
+const addForm = reactive<AddEmployeeModel>({ ...defaultAddEmployee })
+const editForm = reactive<EditEmployeeModel>({ ...defaultEditEmployee })
 const formRef = ref()
 
-function submitAdd() {
-    formRef.value.validate((valid) => {
-        if (valid) {
-            console.log('送出新增', form)
-            showAddDialog.value = false
-            Object.assign(form, {
-                employeeCode: '',
-                name: '',
-                department: '',
-                position: '',
-                status: 'Y',
-                hireDate: '',
-            })
-        }
-    })
+// 表單驗證規則
+const rules = {
+    username: [{ required: true, message: '請輸入帳號', trigger: 'blur' }],
+    password: [{ required: true, message: '請輸入密碼', trigger: 'blur' }],
+    name: [{ required: true, message: '請輸入員工名稱', trigger: 'blur' }],
+    hireDate: [{ required: true, message: '請選擇到職日', trigger: 'change' }],
+    roleId: [{ required: true, message: '請選擇角色', trigger: 'change' }],
 }
 
-function openEditDialog(row) {
-    Object.assign(form, {
+// 新增提交
+async function submitAdd() {
+  formRef.value.validate(async (valid: boolean) => {
+    if (!valid) return
+    try {
+      await apiPost('/api/Auth/register', {
+        ...addForm,
+        hireDate: addForm.hireDate + 'T00:00:00'
+      })
+      ElMessage.success('新增成功')
+      showAddDialog.value = false
+      Object.assign(addForm, { ...defaultAddEmployee })
+      fetchEmployees()
+    } catch (err: any) {
+      ElMessage.error('新增失敗：' + (err.message || err))
+    }
+  })
+}
+
+// 修改提交
+async function submitEdit() {
+  formRef.value.validate(async (valid: boolean) => {
+    if (!valid) return
+    try {
+      await apiPut('/api/User/updateEmployee', {
+        ...editForm,
+        hireDate: editForm.hireDate + 'T00:00:00'
+      })
+      ElMessage.success('修改成功')
+      showEditDialog.value = false
+      Object.assign(editForm, { ...defaultEditEmployee })
+      fetchEmployees()
+    } catch (err: any) {
+      ElMessage.error('修改失敗：' + (err.message || err))
+    }
+  })
+}
+
+function openEditDialog(row: Employee) {
+    Object.assign(editForm, {
         employeeCode: row.employeeCode,
         name: row.name,
         department: row.department,

@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 // 匯入封裝的 API POST 方法
 import { apiPost } from '@/utils/api'
 // 匯入登入資料的 TypeScript 型別
-import type { LoginData } from '@/models/LoginData'
+import type { LoginData } from '@/models/login-data'
 
 export const useAuthStore = defineStore('auth', {
   // 狀態：用來儲存使用者資訊與 JWT token
