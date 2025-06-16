@@ -95,6 +95,17 @@
                 <el-button type="primary" @click="submitEdit">儲存</el-button>
             </template>
         </el-dialog>
+        <!-- 分頁元件 -->
+        <div style="margin-top: 20px; text-align: right;">
+            <el-pagination
+                background
+                layout="prev, pager, next"
+                :current-page="page"
+                :page-size="pageSize"
+                :total="totalCount"
+                @current-change="handlePageChange"
+            />
+        </div>
     </Layout>
 </template>
 
@@ -106,73 +117,36 @@ import { apiGet } from '@/utils/api'
 const employees = ref([])
 const loading = ref(false)
 
-onMounted(async () => {
+const page = ref(1)
+const pageSize = 10
+const totalCount = ref(0)
+
+async function fetchEmployees() {
     loading.value = true
     try {
-        const data = await apiGet('/api/User/userAndEmployeeData')
-        employees.value = data.items
+        const res = await apiGet('/api/User/userAndEmployeeData', {
+            page: page.value,
+            pageSize: pageSize,
+        })
+        employees.value = res.items
+        totalCount.value = res.totalCount
     } catch (error) {
         alert('取得員工資料失敗：' + (error.message || error))
     } finally {
         loading.value = false
     }
+}
+
+function handlePageChange(newPage) {
+    page.value = newPage
+    fetchEmployees()
+}
+
+onMounted(() => {
+    fetchEmployees()
 })
 </script>
 
 <style lang="scss" scoped>
-.hacker-btn {
-    padding: 8px 18px;
-    background-color: transparent;
-    border: 2px solid #00ff00;
-    border-radius: 4px;
-    color: #00ff00;
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
-    box-shadow: 0 0 5px #00ff00;
-    user-select: none;
-
-    &:hover {
-        background-color: #00ff00;
-        color: #000;
-        box-shadow: 0 0 15px #00ff00;
-    }
-
-    &:active {
-        box-shadow: 0 0 8px #33ff33;
-        background-color: #33ff33;
-        color: #000;
-    }
-}
-
-.hacker-btn-small {
-  padding: 4px 10px;
-  background-color: transparent;
-  border: 1.5px solid #00ff00;
-  border-radius: 3px;
-  color: #00ff00;
-  font-family: 'Courier New', Courier, monospace;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
-  box-shadow: 0 0 4px #00ff00;
-  user-select: none;
-
-  &:hover {
-    background-color: #00ccff;
-    border-color: #00ccff;
-    color: #000;
-    box-shadow: 0 0 10px #00ccff;
-  }
-
-  &:active {
-    box-shadow: 0 0 6px #33ffff;
-    background-color: #33ffff;
-    color: #000;
-    border-color: #33ffff;
-  }
-}
-
+@import '@/assets/styles/employee-style.scss';
 </style>

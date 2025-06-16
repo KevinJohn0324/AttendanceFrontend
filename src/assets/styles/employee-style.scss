@@ -1,0 +1,87 @@
+.hacker-btn {
+  padding: 8px 18px;
+  background-color: transparent;
+  border: 2px solid #00ff00;
+  border-radius: 4px;
+  color: #00ff00;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 5px #00ff00;
+  user-select: none;
+
+  &:hover {
+    background-color: #00ff00;
+    color: #000;
+    box-shadow: 0 0 15px #00ff00;
+  }
+
+  &:active {
+    box-shadow: 0 0 8px #33ff33;
+    background-color: #33ff33;
+    color: #000;
+  }
+}
+
+.hacker-btn-small {
+  padding: 4px 10px;
+  background-color: transparent;
+  border: 1.5px solid #00ff00;
+  border-radius: 3px;
+  color: #00ff00;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 4px #00ff00;
+  user-select: none;
+
+  &:hover {
+    background-color: #00ccff;
+    border-color: #00ccff;
+    color: #000;
+    box-shadow: 0 0 10px #00ccff;
+  }
+
+  &:active {
+    box-shadow: 0 0 6px #33ffff;
+    background-color: #33ffff;
+    color: #000;
+    border-color: #33ffff;
+  }
+}
+
+/* 分頁按鈕*/
+::v-deep(.el-pagination) {
+  button,
+  .el-pager li {
+    background-color: #000;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+    font-family: 'Courier New', Courier, monospace;
+    box-shadow: 0 0 5px #00ff00;
+    transition: all 0.3s;
+  }
+
+  .el-pager li:hover,
+  .el-pager li.is-active {
+    background-color: #00ff00;
+    color: #000;
+    border-color: #00ff00;
+    box-shadow: 0 0 10px #00ff00;
+  }
+
+  button:disabled {
+    color: #444;
+    border-color: #444;
+    box-shadow: none;
+  }
+
+  button:hover:not(:disabled) {
+    background-color: #00ff00;
+    color: #000;
+    box-shadow: 0 0 10px #00ff00;
+  }
+}
