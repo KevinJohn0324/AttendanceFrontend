@@ -22,7 +22,11 @@
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column prop="hireDate" label="到職日" />
+            <el-table-column label="到職日">
+                <template #default="{ row }">
+                    {{ row.hireDate?.substring(0, 10) }}
+                </template>
+            </el-table-column>
             <!-- 操作欄 -->
             <el-table-column label="操作" width="120">
                 <template #default="{ row }">
@@ -32,9 +36,9 @@
         </el-table>
 
         <!-- 新增員工對話框 -->
-        <el-dialog title="新增員工" :visible.sync="showAddDialog" width="500px">
+        <el-dialog title="新增員工" v-model="showAddDialog" width="500px">
             <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
-                <el-form-item label="員工編號" prop="employeeCode">
+                <el-form-item style="margin-top: 15px;" label="員工編號" prop="employeeCode">
                     <el-input v-model="form.employeeCode" />
                 </el-form-item>
                 <el-form-item label="姓名" prop="name">
@@ -53,8 +57,8 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="到職日" prop="hireDate">
-                    <el-date-picker v-model="form.hireDate" type="date" placeholder="選擇日期" format="yyyy-MM-dd"
-                        value-format="yyyy-MM-dd" />
+                    <el-date-picker v-model="form.hireDate" type="date" placeholder="選擇日期" format="YYYY-MM-DD"
+                        value-format="YYYY-MM-DD" style="width: 100%;" />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -64,10 +68,10 @@
         </el-dialog>
 
         <!-- 修改員工對話框 -->
-        <el-dialog title="修改員工" :visible.sync="showEditDialog" width="500px">
+        <el-dialog title="修改員工" v-model="showEditDialog" width="500px">
             <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
                 <!-- 表單欄位同新增 -->
-                <el-form-item label="員工編號" prop="employeeCode">
+                <el-form-item style="margin-top: 15px;" label="員工編號" prop="employeeCode">
                     <el-input v-model="form.employeeCode" disabled />
                 </el-form-item>
                 <el-form-item label="姓名" prop="name">
@@ -86,8 +90,8 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="到職日" prop="hireDate">
-                    <el-date-picker v-model="form.hireDate" type="date" placeholder="選擇日期" format="yyyy-MM-dd"
-                        value-format="yyyy-MM-dd" />
+                    <el-date-picker v-model="form.hireDate" type="date" placeholder="選擇日期" format="YYYY-MM-DD"
+                        value-format="YYYY-MM-DD" style="width: 100%;" />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -97,23 +101,18 @@
         </el-dialog>
         <!-- 分頁元件 -->
         <div style="margin-top: 20px; text-align: right;">
-            <el-pagination
-                background
-                layout="prev, pager, next"
-                :current-page="page"
-                :page-size="pageSize"
-                :total="totalCount"
-                @current-change="handlePageChange"
-            />
+            <el-pagination background layout="prev, pager, next" :current-page="page" :page-size="pageSize"
+                :total="totalCount" @current-change="handlePageChange" />
         </div>
     </Layout>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import Layout from '../../components/Layout.vue'
 import { apiGet } from '@/utils/api'
 
+// 員工清單與狀態
 const employees = ref([])
 const loading = ref(false)
 
@@ -145,6 +144,59 @@ function handlePageChange(newPage) {
 onMounted(() => {
     fetchEmployees()
 })
+
+// 表單與對話框狀態
+const showAddDialog = ref(false)
+const showEditDialog = ref(false)
+
+const form = reactive({
+    employeeCode: '',
+    name: '',
+    department: '',
+    position: '',
+    status: 'Y',
+    hireDate: '',
+})
+
+const rules = {
+    employeeCode: [{ required: true, message: '請輸入員工編號', trigger: 'blur' }],
+    name: [{ required: true, message: '請輸入姓名', trigger: 'blur' }],
+    department: [{ required: true, message: '請輸入部門', trigger: 'blur' }],
+    position: [{ required: true, message: '請輸入職稱', trigger: 'blur' }],
+    status: [{ required: true, message: '請選擇狀態', trigger: 'change' }],
+    hireDate: [{ required: true, message: '請選擇到職日', trigger: 'change' }],
+}
+
+const formRef = ref()
+
+function submitAdd() {
+    formRef.value.validate((valid) => {
+        if (valid) {
+            console.log('送出新增', form)
+            showAddDialog.value = false
+            Object.assign(form, {
+                employeeCode: '',
+                name: '',
+                department: '',
+                position: '',
+                status: 'Y',
+                hireDate: '',
+            })
+        }
+    })
+}
+
+function openEditDialog(row) {
+    Object.assign(form, {
+        employeeCode: row.employeeCode,
+        name: row.name,
+        department: row.department,
+        position: row.position,
+        status: row.status,
+        hireDate: row.hireDate,
+    })
+    showEditDialog.value = true
+}
 </script>
 
 <style lang="scss" scoped>
