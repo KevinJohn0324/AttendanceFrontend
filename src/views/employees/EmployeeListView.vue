@@ -11,26 +11,43 @@
         <el-table v-else :data="employees" style="width: 100%;" border
             :header-cell-style="{ background: '#000', color: '#00ff00' }"
             :cell-style="{ background: '#121212', color: '#00ff00' }">
-            <el-table-column prop="employeeCode" label="員工編號" />
-            <el-table-column prop="name" label="姓名" />
-            <el-table-column prop="department" label="部門" />
-            <el-table-column prop="position" label="職稱" />
-            <el-table-column label="狀態">
+            <el-table-column prop="employeeCode" label="員工編號" label-class-name="center-header" width="180" />
+            <el-table-column prop="name" label="姓名" label-class-name="center-header" width="180" />
+            <el-table-column prop="gender" label="性別" label-class-name="center-header" width="60" align="center">
                 <template #default="{ row }">
+                    <el-icon :style="{ color: row.gender === 0 ? '#409EFF' : '#F56C6C', fontSize: '20px' }">
+                        <User />
+                    </el-icon>
+                </template>
+            </el-table-column>
+            <el-table-column prop="email" label="信箱" label-class-name="center-header" width="230" />
+            <el-table-column prop="department" label="部門" label-class-name="center-header" align="center" width="180" />
+            <el-table-column prop="position" label="職稱" label-class-name="center-header" align="center" width="150" />
+            <el-table-column prop="shift" label="班別" label-class-name="center-header" align="center" width="150">
+                <template #default="{ row }" label-class-name="center-header">
+                    <el-tag :type="row.shift === 0 ? 'success' : 'danger'" effect="dark">
+                        {{ row.shift === 0 ? '日班' : '晚班' }}
+                    </el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column label="狀態" label-class-name="center-header" align="center" width="150">
+                <template #default="{ row }" label-class-name="center-header">
                     <el-tag :type="row.status === 'Y' ? 'success' : 'danger'" effect="dark">
                         {{ row.status === 'Y' ? '在職' : '離職' }}
                     </el-tag>
                 </template>
             </el-table-column>
-            <el-table-column label="到職日">
+            <el-table-column label="到職日" label-class-name="center-header" align="center" width="180">
                 <template #default="{ row }">
                     {{ row.hireDate?.substring(0, 10) }}
                 </template>
             </el-table-column>
             <!-- 操作欄 -->
-            <el-table-column label="操作" width="120">
+            <el-table-column label="操作" width="200" label-class-name="center-header" align="center">
                 <template #default="{ row }">
-                    <el-button class="hacker-btn-small" size="medium" @click="openEditDialog(row)">修改</el-button>
+                    <el-button class="hacker-btn-small" size="medium" @click="openEditDialog(row)">修改資料</el-button>
+                    <el-button class="hacker-btn-small red-hover" size="medium"
+                        @click="openAccountDialog(row)">帳號設定</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -58,7 +75,7 @@
                 </el-form-item>
                 <el-form-item label="到職日" prop="hireDate">
                     <el-date-picker v-model="addForm.hireDate" type="date" placeholder="選擇日期" format="YYYY-MM-DD"
-                    value-format="YYYY-MM-DD" style="width: 100%;" />
+                        value-format="YYYY-MM-DD" style="width: 100%;" />
                 </el-form-item>
                 <el-form-item label="角色" prop="roleId">
                     <el-input v-model="addForm.roleId" />
@@ -66,7 +83,23 @@
             </el-form>
             <template #footer>
                 <el-button @click="showAddDialog = false">取消</el-button>
-                <el-button type="primary" @click="submitAdd">新增</el-button>
+                <el-button class="hacker-btn-small red-hover" @click="submitAdd">新增</el-button>
+            </template>
+        </el-dialog>
+
+        <!-- 修改帳號設定對話框 -->
+        <el-dialog title="帳號密碼設定" v-model="showAccountDialog" width="500px">
+            <el-form :model="accountForm" :rules="accountRules" ref="accountFormRef" label-width="100px">
+                <el-form-item style="margin-top: 15px;" label="帳號" prop="username">
+                    <el-input v-model="accountForm.username" disabled />
+                </el-form-item>
+                <el-form-item label="新密碼" prop="password">
+                    <el-input v-model="accountForm.password" show-password />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <el-button @click="showAccountDialog = false">取消</el-button>
+                <el-button class="hacker-btn-small red-hover" @click="submitAccount">儲存</el-button>
             </template>
         </el-dialog>
 
@@ -99,7 +132,7 @@
             </el-form>
             <template #footer>
                 <el-button @click="showEditDialog = false">取消</el-button>
-                <el-button type="primary" @click="submitEdit">儲存</el-button>
+                <el-button class="hacker-btn-small red-hover" @click="submitEdit">儲存</el-button>
             </template>
         </el-dialog>
         <!-- 分頁元件 -->
@@ -116,14 +149,15 @@ import { ElMessage } from 'element-plus'
 import Layout from '../../components/Layout.vue'
 import { apiGet, apiPost, apiPut } from '@/utils/api'
 import {
-  AddEmployeeModel,
-  defaultAddEmployee,
-  EditEmployeeModel,
-  defaultEditEmployee,
-  Employee,
-  EmployeeListData,
-  ApiResponse
+    AddEmployeeModel,
+    defaultAddEmployee,
+    EditEmployeeModel,
+    defaultEditEmployee,
+    Employee,
+    EmployeeListData,
+    ApiResponse
 } from '@/models/employee'
+import { User } from '@element-plus/icons-vue'
 
 // 員工清單與狀態
 const employees = ref<Employee[]>([])
@@ -144,7 +178,7 @@ async function fetchEmployees() {
         employees.value = res.items
         totalCount.value = res.totalCount
     } catch (error) {
-        alert('取得員工資料失敗：' + (error as any).message|| error)
+        alert('取得員工資料失敗：' + (error as any).message || error)
     } finally {
         loading.value = false
     }
@@ -179,40 +213,40 @@ const rules = {
 
 // 新增提交
 async function submitAdd() {
-  formRef.value.validate(async (valid: boolean) => {
-    if (!valid) return
-    try {
-      await apiPost('/api/Auth/register', {
-        ...addForm,
-        hireDate: addForm.hireDate + 'T00:00:00'
-      })
-      ElMessage.success('新增成功')
-      showAddDialog.value = false
-      Object.assign(addForm, { ...defaultAddEmployee })
-      fetchEmployees()
-    } catch (err: any) {
-      ElMessage.error('新增失敗：' + (err.message || err))
-    }
-  })
+    formRef.value.validate(async (valid: boolean) => {
+        if (!valid) return
+        try {
+            await apiPost('/api/Auth/register', {
+                ...addForm,
+                hireDate: addForm.hireDate + 'T00:00:00'
+            })
+            ElMessage.success('新增成功')
+            showAddDialog.value = false
+            Object.assign(addForm, { ...defaultAddEmployee })
+            fetchEmployees()
+        } catch (err: any) {
+            ElMessage.error('新增失敗：' + (err.message || err))
+        }
+    })
 }
 
 // 修改提交
 async function submitEdit() {
-  formRef.value.validate(async (valid: boolean) => {
-    if (!valid) return
-    try {
-      await apiPut('/api/User/updateEmployee', {
-        ...editForm,
-        hireDate: editForm.hireDate + 'T00:00:00'
-      })
-      ElMessage.success('修改成功')
-      showEditDialog.value = false
-      Object.assign(editForm, { ...defaultEditEmployee })
-      fetchEmployees()
-    } catch (err: any) {
-      ElMessage.error('修改失敗：' + (err.message || err))
-    }
-  })
+    formRef.value.validate(async (valid: boolean) => {
+        if (!valid) return
+        try {
+            await apiPut('/api/User/updateEmployee', {
+                ...editForm,
+                hireDate: editForm.hireDate + 'T00:00:00'
+            })
+            ElMessage.success('修改成功')
+            showEditDialog.value = false
+            Object.assign(editForm, { ...defaultEditEmployee })
+            fetchEmployees()
+        } catch (err: any) {
+            ElMessage.error('修改失敗：' + (err.message || err))
+        }
+    })
 }
 
 function openEditDialog(row: Employee) {
@@ -225,6 +259,38 @@ function openEditDialog(row: Employee) {
         hireDate: row.hireDate,
     })
     showEditDialog.value = true
+}
+
+const showAccountDialog = ref(false)
+const accountForm = reactive({
+    username: '',
+    password: '',
+})
+const accountFormRef = ref()
+const accountRules = {
+    password: [{ required: true, message: '請輸入新密碼', trigger: 'blur' }],
+}
+
+function openAccountDialog(row: Employee) {
+    accountForm.username = row.username || ''  // 假設從後端有傳 username
+    accountForm.password = ''
+    showAccountDialog.value = true
+}
+
+async function submitAccount() {
+    accountFormRef.value.validate(async (valid: boolean) => {
+        if (!valid) return
+        try {
+            await apiPut('/api/User/updatePassword', {
+                username: accountForm.username,
+                password: accountForm.password,
+            })
+            ElMessage.success('密碼已更新')
+            showAccountDialog.value = false
+        } catch (err: any) {
+            ElMessage.error('更新失敗：' + (err.message || err))
+        }
+    })
 }
 </script>
 

@@ -1,3 +1,7 @@
+::v-deep(.center-header) {
+  text-align: center;
+}
+
 .hacker-btn {
   padding: 8px 18px;
   background-color: transparent;
@@ -51,6 +55,19 @@
     color: #000;
     border-color: #33ffff;
   }
+}
+
+.red-hover {
+  border: 2px solid #00ff00 !important;
+  color: #000 !important;
+  background-color: #00ff00 !important;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s !important;
+}
+
+.red-hover:hover {
+  background-color: #ff4d4d !important;
+  border-color: #ff4d4d !important;
+  color: #000 !important;
 }
 
 /* 分頁按鈕 */
