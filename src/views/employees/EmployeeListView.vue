@@ -110,8 +110,14 @@
                 <el-form-item style="margin-top: 15px;" label="帳號" prop="username">
                     <el-input v-model="accountForm.username" disabled />
                 </el-form-item>
-                <el-form-item label="新密碼" prop="password">
-                    <el-input v-model="accountForm.password" show-password />
+                <el-form-item label="舊密碼" prop="oldPassword">
+                    <el-input v-model="accountForm.oldPassword" show-password />
+                </el-form-item>
+                <el-form-item label="新密碼" prop="newPassword">
+                    <el-input v-model="accountForm.newPassword" show-password />
+                </el-form-item>
+                <el-form-item label="確認密碼" prop="confirmPassword">
+                    <el-input v-model="accountForm.confirmPassword" show-password />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -187,6 +193,7 @@ import {
     ApiResponse
 } from '@/models/employee'
 import { User } from '@element-plus/icons-vue'
+import type { FormItemRule } from 'element-plus'
 
 // 員工清單與狀態
 const employees = ref<Employee[]>([])
@@ -254,12 +261,16 @@ async function submitAdd() {
             Object.assign(addForm, { ...defaultAddEmployee })
             fetchEmployees()
         } catch (err: any) {
-            ElMessage.error('新增失敗：' + (err.message || err))
+            const message =
+                err.response?.data?.message || // 透過 axios 取得後端錯誤訊息
+                err.message ||
+                '新增失敗'
+            ElMessage.error(message)
         }
     })
 }
 
-// 修改提交
+// 更新提交
 async function submitEdit() {
     formRef.value.validate(async (valid: boolean) => {
         if (!valid) return
@@ -268,12 +279,16 @@ async function submitEdit() {
                 ...editForm,
                 hireDate: editForm.hireDate
             })
-            ElMessage.success('修改成功')
+            ElMessage.success('更新成功')
             showEditDialog.value = false
             Object.assign(editForm, { ...defaultEditEmployee })
             fetchEmployees()
         } catch (err: any) {
-            ElMessage.error('修改失敗：' + (err.message || err))
+            const message =
+                err.response?.data?.message || // 透過 axios 取得後端錯誤訊息
+                err.message ||
+                '更新失敗'
+            ElMessage.error(message)
         }
     })
 }
@@ -294,19 +309,42 @@ function openEditDialog(row: Employee) {
     showEditDialog.value = true
 }
 
+// 帳密設定
 const showAccountDialog = ref(false)
 const accountForm = reactive({
+    userId: 0,
     username: '',
-    password: '',
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
 })
+
 const accountFormRef = ref()
 const accountRules = {
-    password: [{ required: true, message: '請輸入新密碼', trigger: 'blur' }],
+    oldPassword: [{ required: true, message: '請輸入舊密碼', trigger: 'blur' }],
+    newPassword: [
+        { required: true, message: '請輸入新密碼', trigger: 'blur' },
+        { min: 6, message: '密碼長度至少6碼', trigger: 'blur' },
+    ],
+    confirmPassword: [
+    { required: true, message: '請再次輸入新密碼', trigger: 'blur' },
+    {
+      validator: (_rule: FormItemRule, value: string) => {
+        if (value !== accountForm.newPassword) {
+          return Promise.reject('輸入的新密碼不一致')
+        }
+        return Promise.resolve()
+      },
+      trigger: 'blur',
+    },
+  ],
 }
 
 function openAccountDialog(row: Employee) {
-    accountForm.username = row.username || ''  // 假設從後端有傳 username
-    accountForm.password = ''
+    accountForm.userId = row.userId
+    accountForm.username = row.username || ''
+    accountForm.oldPassword = ''
+    accountForm.newPassword = ''
     showAccountDialog.value = true
 }
 
@@ -314,14 +352,20 @@ async function submitAccount() {
     accountFormRef.value.validate(async (valid: boolean) => {
         if (!valid) return
         try {
-            await apiPut('/api/User/updatePassword', {
+            await apiPut('/api/User/updateUser', {
+                userId: accountForm.userId,
                 username: accountForm.username,
-                password: accountForm.password,
+                oldPassword: accountForm.oldPassword,
+                newPassword: accountForm.newPassword,
             })
             ElMessage.success('密碼已更新')
             showAccountDialog.value = false
         } catch (err: any) {
-            ElMessage.error('更新失敗：' + (err.message || err))
+            const message =
+                err.response?.data?.message || // axios 錯誤回應格式
+                err.message ||
+                '更新失敗'
+            ElMessage.error(message)
         }
     })
 }

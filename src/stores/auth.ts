@@ -12,6 +12,7 @@ export const useAuthStore = defineStore('auth', {
   }),
   actions: {
     async login(username: string, password: string) {
+      try {
       const loginData = await apiPost<LoginData>('/api/Auth/login', {
         username,
         password,
@@ -24,6 +25,12 @@ export const useAuthStore = defineStore('auth', {
       // 將登入資訊存入 localStorage，記住登入狀態
       localStorage.setItem('token', this.token)
       localStorage.setItem('user', JSON.stringify(this.user))
+      }catch(err:any){
+        // 從 axios 的錯誤回應中抓 message 丟出
+        const message =
+          err.response?.data?.message || err.message || '登入失敗'
+        throw new Error(message)
+      }
     },
 
     /**
