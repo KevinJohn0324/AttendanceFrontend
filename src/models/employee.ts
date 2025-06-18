@@ -6,18 +6,23 @@ export interface AddEmployeeModel {
   password: string
   employeeCode: string
   name: string
+  gender: number | null
   department: string
   position: string
+  shift: number | null
   hireDate: string
-  roleId: number
+  roleId: number | null
 }
 
 // 修改員工欄位
 export interface EditEmployeeModel {
+  employeeId: number | null
   employeeCode: string
   name: string
+  gender: number | null
   department: string
   position: string
+  shift: number | null
   status: 'Y' | 'N'
   hireDate: string
 }
@@ -28,23 +33,28 @@ export const defaultAddEmployee: AddEmployeeModel = {
   password: '',
   employeeCode: '',
   name: '',
+  gender: null,
   department: '',
   position: '',
+  shift: null,
   hireDate: '',
-  roleId: 3,
+  roleId: null,
 }
 
 // 預設修改員工資料
 export const defaultEditEmployee: EditEmployeeModel = {
+  employeeId: null,
   employeeCode: '',
   name: '',
+  gender: null,
   department: '',
   position: '',
+  shift: null,
   status: 'Y',
   hireDate: '',
 }
 
-// 員工資料
+// 使用者帳密及員工資料
 export interface Employee {
   userId: number
   username: string
@@ -52,8 +62,10 @@ export interface Employee {
   employeeId: number
   employeeCode: string
   name: string
+  gender: number | null
   department: string
   position: string
+  shift: number | null
   status: string
   hireDate: string
 }

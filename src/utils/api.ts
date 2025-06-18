@@ -47,6 +47,6 @@ export async function apiGet<T>(url: string, params?: any): Promise<T> {
   return api.get(url, { params }) as Promise<T>
 }
 
-export async function apiPut<T>(url: string, params?: any): Promise<T> {
-  return api.get(url, { params }) as Promise<T>
+export async function apiPut<T>(url: string, data?: any): Promise<T> {
+  return api.put(url, data) as Promise<T>
 }

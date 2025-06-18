@@ -67,18 +67,35 @@
                 <el-form-item label="員工名稱" prop="name">
                     <el-input v-model="addForm.name" />
                 </el-form-item>
+                <el-form-item label="性別" prop="gender">
+                    <el-select v-model="addForm.gender" placeholder="選擇性別">
+                        <el-option label="男" value=0 />
+                        <el-option label="女" value=1 />
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="部門名稱" prop="department">
                     <el-input v-model="addForm.department" />
                 </el-form-item>
                 <el-form-item label="職稱" prop="position">
                     <el-input v-model="addForm.position" />
                 </el-form-item>
+                <el-form-item label="班別" prop="shift">
+                    <el-select v-model="addForm.shift" placeholder="選擇班別">
+                        <el-option label="日班" value=0 />
+                        <el-option label="晚班" value=1 />
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="到職日" prop="hireDate">
                     <el-date-picker v-model="addForm.hireDate" type="date" placeholder="選擇日期" format="YYYY-MM-DD"
                         value-format="YYYY-MM-DD" style="width: 100%;" />
                 </el-form-item>
                 <el-form-item label="角色" prop="roleId">
-                    <el-input v-model="addForm.roleId" />
+                    <el-select v-model="addForm.roleId" placeholder="選擇角色">
+                        <el-option label="員工" value=3 />
+                        <el-option label="人資" value=4 />
+                        <el-option label="管理者" value=2 />
+                        <el-option label="最高權限" value=1 />
+                    </el-select>
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -108,10 +125,16 @@
             <el-form :model="editForm" :rules="rules" ref="formRef" label-width="100px">
                 <!-- 表單欄位同新增 -->
                 <el-form-item style="margin-top: 15px;" label="員工編號" prop="employeeCode">
-                    <el-input v-model="editForm.employeeCode" disabled />
+                    <el-input v-model="editForm.employeeCode" />
                 </el-form-item>
                 <el-form-item label="姓名" prop="name">
                     <el-input v-model="editForm.name" />
+                </el-form-item>
+                <el-form-item label="性別" prop="gender">
+                    <el-select v-model="editForm.gender" placeholder="選擇性別">
+                        <el-option :label="'男'" :value="0" />
+                        <el-option :label="'女'" :value="1" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="部門" prop="department">
                     <el-input v-model="editForm.department" />
@@ -123,6 +146,12 @@
                     <el-select v-model="editForm.status" placeholder="選擇狀態">
                         <el-option label="在職" value="Y" />
                         <el-option label="離職" value="N" />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="班別" prop="shift">
+                    <el-select v-model="editForm.shift" placeholder="選擇班別">
+                        <el-option :label="'日班'" :value="0" />
+                        <el-option :label="'晚班'" :value="1" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="到職日" prop="hireDate">
@@ -237,7 +266,7 @@ async function submitEdit() {
         try {
             await apiPut('/api/User/updateEmployee', {
                 ...editForm,
-                hireDate: editForm.hireDate + 'T00:00:00'
+                hireDate: editForm.hireDate
             })
             ElMessage.success('修改成功')
             showEditDialog.value = false
@@ -249,13 +278,17 @@ async function submitEdit() {
     })
 }
 
+// 開啟修改對話框，並將員工資料帶入表單中
 function openEditDialog(row: Employee) {
     Object.assign(editForm, {
+        employeeId: row.employeeId,
         employeeCode: row.employeeCode,
         name: row.name,
+        gender: row.gender,
         department: row.department,
         position: row.position,
         status: row.status,
+        shift: row.shift,
         hireDate: row.hireDate,
     })
     showEditDialog.value = true
