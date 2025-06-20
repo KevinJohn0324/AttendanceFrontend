@@ -1,0 +1,112 @@
+$main-color: #00ff00;
+$main-bg-color: transparent;
+$today-bg-color: #00ff00;
+$today-text-color: #000;
+$black-shadow: #000;
+
+// 嵌套 .calendar-grid 樣式
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+
+  .day-name {
+    text-align: center;
+    font-weight: bold;
+    height: 30px;
+    line-height: 30px;
+  }
+
+  .blank {
+    background: $main-bg-color;
+    border: none;
+    height: 80px;
+  }
+
+  .date-cell {
+    border: 1px solid $main-color;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    user-select: none;
+    cursor: default;
+    position: relative;
+    padding: 6px;
+
+    // 原本的日期數字
+    .date-number {
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      font-weight: bold;
+      font-size: 13px;
+      color: $main-color;
+    }
+
+    /* ★ 平常日期的 log 資訊 */
+    .log-info {
+      color: $main-color;
+      font-size: 12px;
+      font-family: 'Courier New', Courier, monospace;
+      text-shadow:
+        0 0 2px $main-color,
+        0 0 5px $main-color;
+      letter-spacing: 0.03em;
+      align-self: flex-start;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      div {
+        color: inherit;
+        text-align: left;
+      }
+    }
+
+    /* ★ 今日日期專用樣式 */
+    &.today {
+      background-color: $today-bg-color !important;
+      color: $today-text-color !important;
+      font-weight: bold;
+      box-shadow: 0 0 8px $main-color;
+
+      .date-number {
+        font-size: 13px;
+        font-weight: bold;
+        color: $today-text-color;
+        text-shadow:
+         -1px -1px 2 $black-shadow,
+          1px -1px 2 $black-shadow,
+         -1px  1px 2 $black-shadow,
+          1px  1px 2 $black-shadow;
+      }
+
+      .log-info {
+        color: $today-text-color !important;
+        font-size: 12px;
+        font-weight: bold;
+        font-family: 'Courier New', Courier, monospace;
+        letter-spacing: 0.05em;
+        text-shadow:
+          0 0 5px $black-shadow,
+          0 0 10px $black-shadow,
+          0 0 20px $black-shadow,
+          0 0 40px rgba(0, 0, 0, 0.6);
+        align-self: flex-start;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        div {
+          color: inherit;
+          text-align: left;
+        }
+      }
+    }
+  }
+}
+
