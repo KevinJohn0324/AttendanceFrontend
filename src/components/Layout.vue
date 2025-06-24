@@ -3,26 +3,23 @@
     <!-- 側邊欄 -->
     <el-aside width="220px" style="background-color: #000; color: #00ff00;">
       <h2 style="text-align:center; margin-bottom: 20px; color:#00ff00;">考勤系統</h2>
-      <el-menu
-        :default-active="activeMenu"
-        background-color="#000"
-        text-color="#00ff00"
-        active-text-color="#00ff00"
-        router
-        @select="goTo"
-        style="border-right: none;"
-      >
+      <el-menu :default-active="activeMenu" background-color="#000" text-color="#00ff00" active-text-color="#00ff00"
+        router @select="goTo" style="border-right: none;">
         <el-menu-item index="home">首頁</el-menu-item>
         <el-menu-item index="employees">員工資料</el-menu-item>
-        <el-menu-item index="records">打卡紀錄</el-menu-item>
+        <el-sub-menu index="leave">
+          <template #title>假單管理</template>
+          <el-menu-item index="leave/my">個人假單紀錄</el-menu-item>
+          <el-menu-item index="leave/review">假單審核</el-menu-item>
+          <el-menu-item index="leave/types">假單種類管理</el-menu-item>
+        </el-sub-menu>
       </el-menu>
     </el-aside>
 
     <!-- 主內容 -->
     <el-container>
       <el-header
-        style="display:flex; justify-content:space-between; align-items:center; background-color:#121212; color:#00ff00; border-bottom: 1px solid #00ff00; padding: 0 20px;"
-      >
+        style="display:flex; justify-content:space-between; align-items:center; background-color:#121212; color:#00ff00; border-bottom: 1px solid #00ff00; padding: 0 20px;">
         <div style="font-weight:bold;">{{ currentTime }}</div>
         <div style="display:flex; align-items:center; gap: 15px;">
           <span style="font-weight:bold;">{{ username }}</span>

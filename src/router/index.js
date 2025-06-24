@@ -19,6 +19,14 @@ const routes = [
     component: EmployeeList,
     meta: { requiresAuth: true },
   },
+  // {
+  //   path: '/leave',
+  //   children:[
+  //     {path: 'my', component: MyLeaves},
+  //     {path: 'review', component: LeaveReview, meta: { role: 'manager' }},
+  //     {path: 'types', component: LeaveTypes, meta: { role: 'admin' }},
+  //   ]
+  // }
 ]
 
 const router = createRouter({

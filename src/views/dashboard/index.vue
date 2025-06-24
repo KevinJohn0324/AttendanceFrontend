@@ -7,7 +7,12 @@
         router @select="goTo" style="border-right: none;">
         <el-menu-item index="home">首頁</el-menu-item>
         <el-menu-item index="employees">員工資料</el-menu-item>
-        <el-menu-item index="records">打卡紀錄</el-menu-item>
+        <el-sub-menu index="leave">
+          <template #title>假單管理</template>
+          <el-menu-item index="leave/my">個人假單紀錄</el-menu-item>
+          <el-menu-item index="leave/review">假單審核</el-menu-item>
+          <el-menu-item index="leave/types">假單種類管理</el-menu-item>
+        </el-sub-menu>
       </el-menu>
     </el-aside>
 
