@@ -9,7 +9,7 @@
         <el-menu-item index="employees">員工資料</el-menu-item>
         <el-sub-menu index="leave">
           <template #title>假單管理</template>
-          <el-menu-item index="leave/my">個人假單紀錄</el-menu-item>
+          <el-menu-item index="leave/myLeave">個人假單紀錄</el-menu-item>
           <el-menu-item index="leave/review">假單審核</el-menu-item>
           <el-menu-item index="leave/types">假單種類管理</el-menu-item>
         </el-sub-menu>
@@ -64,15 +64,43 @@
       </el-main>
     </el-container>
   </el-container>
+
+  <!-- 請假申請對話框 -->
+  <el-dialog title="請假申請" v-model="showLeaveDialog" width="500px" class="leave-dialog">
+    <el-form :model="leaveForm" :rules="leaveRules" ref="leaveFormRef" label-width="100px">
+      <el-form-item label="假別" prop="leaveType">
+        <el-select v-model="leaveForm.leaveCode" placeholder="請選擇">
+          <el-option label="事假" value="personal" />
+          <el-option label="病假" value="sick" />
+          <el-option label="特休" value="annual" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="開始時間" prop="startTime">
+        <el-date-picker v-model="leaveForm.startTime" type="datetime" placeholder="選擇開始時間" format="YYYY-MM-DD HH:mm"
+          value-format="YYYY-MM-DD HH:mm:ss" style="width:100%;" />
+      </el-form-item>
+      <el-form-item label="結束時間" prop="endTime">
+        <el-date-picker v-model="leaveForm.endTime" type="datetime" placeholder="選擇結束時間" format="YYYY-MM-DD HH:mm"
+          value-format="YYYY-MM-DD HH:mm:ss" style="width:100%;" />
+      </el-form-item>
+      <el-form-item label="原因" prop="reason">
+        <el-input v-model="leaveForm.reason" placeholder="請輸入請假原因" />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="showLeaveDialog = false">取消</el-button>
+      <el-button class="hacker-btn-small red-hover" @click="submitLeave">送出</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
 import { apiGet, apiPost } from '@/utils/api'
-import type { AttLog } from '@/models/index'
+import { AttLog, LeaveForm, defaultLeaveForm } from '@/models/index'
 
 // Router 與使用者狀態
 const router = useRouter()
@@ -93,8 +121,46 @@ function logout() {
   router.push('/login')
 }
 
+// 假單表單
 function leave() {
-  alert('請假申請送出！')
+  showLeaveDialog.value = true
+}
+
+const showLeaveDialog = ref(false)
+const leaveForm = reactive<LeaveForm>({ ...defaultLeaveForm })
+const leaveFormRef = ref()
+
+// 驗證假單規則
+const leaveRules = {
+  leaveCode: [{ required: true, message: '請選擇假別', trigger: 'change' }],
+  startTime: [{ required: true, message: '請選擇開始時間', trigger: 'change' }],
+  endTime: [{ required: true, message: '請選擇結束時間', trigger: 'change' }],
+}
+
+// 串接 API
+async function submitLeave() {
+  leaveFormRef.value.validate(async (valid: boolean) => {
+    if (!valid) return
+    try {
+      const formattedStartTime = leaveForm.startTime.replace(' ', 'T')
+      const formattedEndTime = leaveForm.endTime.replace(' ', 'T')
+
+      await apiPost('/api/leave/apply', {
+        leaveCode: leaveForm.leaveCode,
+        startTime: formattedStartTime,
+        endTime: formattedEndTime,
+        reason: leaveForm.reason,
+      })
+      ElMessage.success('請假申請成功')
+      showLeaveDialog.value = false
+      Object.assign(leaveForm, { ...defaultLeaveForm })
+    } catch (err: any) {
+      const message =
+        err.response?.data?.message || // 透過 axios 取得後端錯誤訊息
+        err.message || '假單送出失敗'
+      ElMessage.error(message)
+    }
+  })
 }
 
 // 現在時間

@@ -261,8 +261,7 @@ async function submitAdd() {
         } catch (err: any) {
             const message =
                 err.response?.data?.message || // 透過 axios 取得後端錯誤訊息
-                err.message ||
-                '新增失敗'
+                err.message || '新增失敗'
             ElMessage.error(message)
         }
     })
@@ -284,8 +283,7 @@ async function submitEdit() {
         } catch (err: any) {
             const message =
                 err.response?.data?.message || // 透過 axios 取得後端錯誤訊息
-                err.message ||
-                '更新失敗'
+                err.message || '更新失敗'
             ElMessage.error(message)
         }
     })
@@ -325,17 +323,17 @@ const accountRules = {
         { min: 6, message: '密碼長度至少6碼', trigger: 'blur' },
     ],
     confirmPassword: [
-    { required: true, message: '請再次輸入新密碼', trigger: 'blur' },
-    {
-      validator: (_rule: FormItemRule, value: string) => {
-        if (value !== accountForm.newPassword) {
-          return Promise.reject('輸入的新密碼不一致')
-        }
-        return Promise.resolve()
-      },
-      trigger: 'blur',
-    },
-  ],
+        { required: true, message: '請再次輸入新密碼', trigger: 'blur' },
+        {
+            validator: (_rule: FormItemRule, value: string) => {
+                if (value !== accountForm.newPassword) {
+                    return Promise.reject('輸入的新密碼不一致')
+                }
+                return Promise.resolve()
+            },
+            trigger: 'blur',
+        },
+    ],
 }
 
 function openAccountDialog(row: Employee) {
@@ -361,8 +359,7 @@ async function submitAccount() {
         } catch (err: any) {
             const message =
                 err.response?.data?.message || // axios 錯誤回應格式
-                err.message ||
-                '更新失敗'
+                err.message || '更新失敗'
             ElMessage.error(message)
         }
     })

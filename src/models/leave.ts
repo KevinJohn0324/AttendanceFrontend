@@ -9,6 +9,7 @@ export interface LeaveRecord {
   reason: string
   statusDisplay: string
   createdAt: string
+  updatedAt: string
 }
 
 // 請假單分頁資料

@@ -3,9 +3,13 @@
     <div class="leave-page">
       <h2>個人假單紀錄</h2>
       <!-- 資料表 -->
-      <el-table :data="Leaves" border style="width: 100%" header-cell-class-name="center-header" :empty-text="loading ? '載入中...' : 'No Data'">
-        <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="leaveType" label="假別" />
+      <el-table :data="Leaves" border style="width: 100%" header-cell-class-name="center-header"
+        :empty-text="loading ? '載入中...' : 'No Data'">
+        <el-table-column prop="leaveType" label="假別">
+          <template #default="{ row }">
+            {{ insertSpaces(row.leaveType) }}
+          </template>
+        </el-table-column>
         <el-table-column prop="startTime" label="開始時間">
           <template #default="{ row }">
             {{ formatDate(row.startTime) }}
@@ -26,7 +30,12 @@
         </el-table-column>
         <el-table-column prop="createdAt" label="申請時間">
           <template #default="{ row }">
-            {{ formatDate(row.startTime) }}
+            {{ formatDate(row.createdAt) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="updatedAt" label="更新時間">
+          <template #default="{ row }">
+            {{ formatDate(row.updatedAt) }}
           </template>
         </el-table-column>
       </el-table>
@@ -107,6 +116,10 @@ function getStatusClass(status: string) {
     default:
       return '';
   }
+}
+
+function insertSpaces(str: string, count = 2) {
+  return str.split('').join(' '.repeat(count))
 }
 </script>
 
