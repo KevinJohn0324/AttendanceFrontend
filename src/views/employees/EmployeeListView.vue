@@ -190,7 +190,6 @@ import {
     defaultEditEmployee,
     Employee,
     EmployeeListData,
-    ApiResponse
 } from '@/models/employee'
 import { User } from '@element-plus/icons-vue'
 import type { FormItemRule } from 'element-plus'
@@ -210,11 +209,10 @@ async function fetchEmployees() {
             page: page.value,
             pageSize: pageSize,
         })
-        console.log('API 回傳', res)
         employees.value = res.items
         totalCount.value = res.totalCount
     } catch (error) {
-        alert('取得員工資料失敗：' + (error as any).message || error)
+        ElMessage.error('取得員工資料失敗：' + ((error as any)?.message || error))
     } finally {
         loading.value = false
     }

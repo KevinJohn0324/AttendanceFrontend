@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 
 const Dashboard = () => import('../views/dashboard/index.vue')
 const EmployeeList = () => import('../views/employees/EmployeeListView.vue')
+const MyLeaves = () => import('../views/leave/MyLeaveRecords.vue')
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -19,14 +20,17 @@ const routes = [
     component: EmployeeList,
     meta: { requiresAuth: true },
   },
-  // {
-  //   path: '/leave',
-  //   children:[
-  //     {path: 'my', component: MyLeaves},
-  //     {path: 'review', component: LeaveReview, meta: { role: 'manager' }},
-  //     {path: 'types', component: LeaveTypes, meta: { role: 'admin' }},
-  //   ]
-  // }
+  {
+    path: '/leave',
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: 'my',
+        component: MyLeaves,
+        meta: { requiresAuth: true },
+      }
+    ]
+  }
 ]
 
 const router = createRouter({
