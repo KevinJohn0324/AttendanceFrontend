@@ -44,11 +44,13 @@
         <!-- 日曆格子 -->
         <div class="calendar-grid">
           <!-- 星期欄位 -->
-          <div v-for="day in dayNames" :key="day" class="day-name">{{ day }}</div>
+          <div v-for="day in dayNames" :key="day" :class="['day-name', { weekend: isWeekendHeader(day) }]">{{ day }}
+          </div>
           <!-- 月初空白格 -->
           <div v-for="blank in blanks" :key="'b' + blank" class="blank"></div>
           <!-- 每日格子 -->
-          <div v-for="item in daysWithLog" :key="item.day" :class="['date-cell', { today: isToday(item.day) }]">
+          <div v-for="item in daysWithLog" :key="item.day"
+            :class="['date-cell', { today: isToday(item.day), weekend: isWeekend(item.day) }]">
             <div class="date-number">{{ item.day }}</div>
             <!-- 顯示的打卡紀錄內容 -->
             <template v-if="item.log">
@@ -115,6 +117,10 @@ watch(selectedMonth, (newValue) => {
 // 日曆計算
 const dayNames = ['日', '一', '二', '三', '四', '五', '六']
 
+function isWeekendHeader(day: string): boolean {
+  return day === '日' || day === '六';
+}
+
 function daysInMonth(y: number, m: number) {
   return new Date(y, m, 0).getDate()
 }
@@ -145,6 +151,16 @@ function isToday(day: number) {
     selectedMonthNum.value === today.getMonth() + 1 &&
     selectedYear.value === today.getFullYear()
   )
+}
+
+// 判斷周末
+function isWeekend(day: number): boolean {
+  // 取得選定月份的年份和月份
+  const year = selectedMonth.value.getFullYear();
+  const month = selectedMonth.value.getMonth();
+  const date = new Date(year, month, day);
+  const dayOfWeek = date.getDay();
+  return dayOfWeek === 0 || dayOfWeek === 6;
 }
 
 // 取得指定日期的打卡資料

@@ -15,12 +15,21 @@ $black-shadow: #000;
     font-weight: bold;
     height: 30px;
     line-height: 30px;
+
+    &.weekend {
+      color: #ff1744;
+    }
   }
 
   .blank {
     background: $main-bg-color;
     border: none;
     height: 80px;
+  }
+
+  .date-cell.weekend {
+    border: 1px solid #ff3333 !important;
+    box-shadow: 0 0 5px #ff3333;
   }
 
   .date-cell {
@@ -78,10 +87,10 @@ $black-shadow: #000;
         font-weight: bold;
         color: $today-text-color;
         text-shadow:
-         -1px -1px 2 $black-shadow,
+          -1px -1px 2 $black-shadow,
           1px -1px 2 $black-shadow,
-         -1px  1px 2 $black-shadow,
-          1px  1px 2 $black-shadow;
+          -1px 1px 2 $black-shadow,
+          1px 1px 2 $black-shadow;
       }
 
       .log-info {
@@ -107,6 +116,14 @@ $black-shadow: #000;
         }
       }
     }
+
+    &.weekend {
+      border: 2px solid #ff1744;
+
+      .date-number {
+        color: #ff1744;
+        font-weight: bold;
+      }
+    }
   }
 }
-
