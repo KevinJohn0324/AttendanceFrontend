@@ -66,7 +66,7 @@
   </el-container>
 
   <!-- 請假申請對話框 -->
-  <el-dialog title="請假申請" v-model="showLeaveDialog" width="500px" class="leave-dialog">
+  <el-dialog title="請假申請" v-model="showLeaveDialog" width="500px">
     <el-form :model="leaveForm" :rules="leaveRules" ref="leaveFormRef" label-width="100px">
       <el-form-item label="假別" prop="leaveType">
         <el-select v-model="leaveForm.leaveCode" placeholder="請選擇">
