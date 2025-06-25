@@ -34,7 +34,7 @@
       <el-main style="background-color: #121212; color:#00ff00; padding: 20px;">
         <!-- 月份選擇器 -->
         <div style="text-align:left; margin-bottom: 15px;">
-          <el-date-picker v-model="selectedMonth" type="month" placeholder="選擇月份" format="yyyy-MM"
+          <el-date-picker v-model="selectedMonth" type="month" placeholder="選擇月份" format="YYYY-MM"
             :picker-options="pickerOptions" />
         </div>
 
