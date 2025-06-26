@@ -1,0 +1,244 @@
+::v-deep(.center-header) {
+  text-align: center;
+}
+
+/* 展開行的背景色 */
+::v-deep(.el-table__expanded-cell) {
+  background-color: #000 !important;
+}
+
+/* 橫向時間線樣式 */
+.horizontal-timeline {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px 20px;
+}
+
+.horizontal-timeline .event {
+  display: flex;
+  align-items: center;
+}
+
+.horizontal-timeline .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.horizontal-timeline .label {
+  font-size: 12px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.horizontal-timeline .line {
+  flex: 1;
+  height: 2px;
+  background-color: #0077ff;
+  margin: 0 10px;
+}
+
+/* 狀態效果 */
+.horizontal-timeline .event.active .dot {
+  background-color: #ff0;
+  box-shadow: 0px 0px 5px #ff0;
+}
+.horizontal-timeline .event.completed .dot {
+  background-color: #00ff00;
+  box-shadow: 0px 0px 5px #00ff00;
+}
+.horizontal-timeline .event.rejected .dot {
+  background-color: #ff0000;
+  box-shadow: 0px 0px 5px #ff0000;
+}
+.horizontal-timeline .event.pending .dot {
+  background-color: #555;
+}
+
+
+/* 按鈕樣式 */
+.hacker-btn {
+  padding: 8px 18px;
+  background-color: transparent;
+  border: 2px solid #00ff00;
+  border-radius: 4px;
+  color: #00ff00;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 5px #00ff00;
+  user-select: none;
+
+  &:hover {
+    background-color: #00ff00;
+    color: #000;
+    box-shadow: 0 0 15px #00ff00;
+  }
+
+  &:active {
+    box-shadow: 0 0 8px #33ff33;
+    background-color: #33ff33;
+    color: #000;
+  }
+}
+
+.hacker-btn-small {
+  padding: 4px 10px;
+  background-color: transparent;
+  border: 1.5px solid #00ff00;
+  border-radius: 3px;
+  color: #00ff00;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  box-shadow: 0 0 4px #00ff00;
+  user-select: none;
+
+  &:hover {
+    background-color: #00ccff;
+    border-color: #00ccff;
+    color: #000;
+    box-shadow: 0 0 10px #00ccff;
+  }
+
+  &:active {
+    box-shadow: 0 0 6px #33ffff;
+    background-color: #33ffff;
+    color: #000;
+    border-color: #33ffff;
+  }
+}
+
+.red-hover {
+  border: 2px solid #00ff00 !important;
+  color: #000 !important;
+  background-color: #00ff00 !important;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s !important;
+}
+
+.red-hover:hover {
+  background-color: #ff4d4d !important;
+  border-color: #ff4d4d !important;
+  color: #000 !important;
+}
+
+/* 分頁按鈕 */
+::v-deep(.el-pagination) {
+  button,
+  .el-pager li {
+    background-color: #000;
+    color: #00ff00;
+    border: 1px solid #00ff00;
+    font-family: 'Courier New', Courier, monospace;
+    box-shadow: 0 0 5px #00ff00;
+    transition: all 0.3s;
+  }
+
+  .el-pager li:hover,
+  .el-pager li.is-active {
+    background-color: #003300;
+    color: #00ff00;
+    border-color: #00ff00;
+    box-shadow: 0 0 10px #00ff00;
+  }
+
+  button:hover:not(:disabled) {
+    background-color: #003300;
+    color: #00ff00;
+    box-shadow: 0 0 10px #00ff00;
+  }
+
+  button:disabled {
+    background-color: #111;
+    color: #444;
+    border-color: #444;
+    box-shadow: none;
+  }
+
+  button:disabled:hover {
+    background-color: #330000;
+    color: #ff1744;
+    border-color: #ff1744;
+    box-shadow: 0 0 10px #ff1744;
+  }
+}
+
+/* 對話框樣式 */
+::v-deep(.el-dialog) {
+  background-color: #121212;
+  border: 2px solid #00ff00;
+  box-shadow: 0 0 15px #00ff00;
+  border-radius: 8px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* 對話框標題 */
+::v-deep(.el-dialog__header) {
+  background-color: #000;
+  border-bottom: 1px solid #00ff00;
+  padding: 15px 20px;
+  .el-dialog__title {
+    color: #00ff00;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  .el-dialog__headerbtn .el-dialog__close {
+    color: #00ff00;
+    &:hover {
+      color: #33ff33;
+    }
+  }
+}
+
+/* 對話框表單標籤 */
+::v-deep(.el-form-item__label) {
+  color: #00ff00;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+}
+
+/* 對話框底部按鈕 */
+::v-deep(.el-dialog__footer) {
+  background-color: #121212;
+  border-top: 1px solid #00ff00;
+  padding: 15px 20px;
+  text-align: right;
+  .el-button {
+    background-color: transparent;
+    border: 2px solid #00ff00;
+    color: #00ff00;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    box-shadow: 0 0 5px #00ff00;
+    transition: all 0.3s;
+    &:hover {
+      background-color: #00ff00;
+      color: #000;
+      box-shadow: 0 0 10px #00ff00;
+    }
+    &:active {
+      background-color: #33ff33;
+      box-shadow: 0 0 8px #33ff33;
+    }
+  }
+  .el-button--primary {
+    background-color: #00ff00;
+    border-color: #00ff00;
+    color: #000;
+    box-shadow: 0 0 5px #00ff00;
+    &:hover {
+      background-color: #33ff33;
+      border-color: #33ff33;
+      box-shadow: 0 0 10px #33ff33;
+    }
+    &:active {
+      background-color: #00cc00;
+      border-color: #00cc00;
+      box-shadow: 0 0 8px #00cc00;
+    }
+  }
+}

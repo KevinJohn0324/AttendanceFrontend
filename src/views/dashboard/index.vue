@@ -10,7 +10,7 @@
         <el-sub-menu index="leave">
           <template #title>假單管理</template>
           <el-menu-item index="leave/myLeave">個人假單紀錄</el-menu-item>
-          <el-menu-item index="leave/review">假單審核</el-menu-item>
+          <el-menu-item index="leave/ApprovalLeave">假單審核</el-menu-item>
           <el-menu-item index="leave/types">假單種類管理</el-menu-item>
         </el-sub-menu>
       </el-menu>

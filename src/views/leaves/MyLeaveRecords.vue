@@ -3,7 +3,7 @@
     <div class="leave-page">
       <h2>個人假單紀錄</h2>
       <!-- 資料表 -->
-      <el-table :data="Leaves" border style="width: 100%" header-cell-class-name="center-header"
+      <el-table :data="leaves" border style="width: 100%" header-cell-class-name="center-header"
         :empty-text="loading ? '載入中...' : 'No Data'">
         <el-table-column prop="leaveType" label="假別">
           <template #default="{ row }">
@@ -57,7 +57,7 @@ import { apiGet, apiPost, apiPut } from '@/utils/api'
 import { LeaveRecord, LeaveRecordData, ApiResponse } from '@/models/leave'
 
 // 假單記錄資料
-const Leaves = ref<LeaveRecord[]>([]);
+const leaves = ref<LeaveRecord[]>([]);
 const loading = ref(false);
 
 const page = ref(1);
@@ -71,7 +71,7 @@ async function fetchLeaves() {
       page: page.value,
       pageSize: pageSize,
     })
-    Leaves.value = res.items;
+    leaves.value = res.items;
     totalCount.value = res.totalCount
   } catch (error) {
     ElMessage.error('取得假單資料失敗：' + ((error as any)?.message || error))
